@@ -155,12 +155,5 @@
     "blur": 0.1,
     "url": "",
     "alpha": 1.0
-  },
-  "font": {
-    "font_family": "Math Sans Bold",
-    "font_normal": "Math Sans Bold", // TEXT_NORMAL
-    "font_muted": "Math Sans Bold",  // TEXT_MUTED
-    "font_link": "Math Sans Bold",    // TEXT_LINK
-    "font_channel": "Math Sans Bold"   // CHANNELS_DEFAULT
   }
 }
