@@ -7,7 +7,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #282c34;
             color: #61dafb;
             display: flex;
             justify-content: center;
@@ -27,7 +26,7 @@
             margin: 0;
             font-size: 2em;
         }
-        .time, .battery {
+        .time {
             margin-top: 10px;
             font-size: 1.5em;
         }
@@ -38,7 +37,6 @@
         <h1>Clock & Battery Status</h1>
         <p>Credits: memecat0</p>
         <div class="time">Time: Loading...</div>
-        <div class="battery">Battery: Loading...</div>
     </div>
 
     <script>
@@ -51,22 +49,8 @@
             document.querySelector('.time').textContent = `Time: ${hours}:${minutes}:${seconds}`;
         }
 
-        // Function to get battery status
-        async function updateBatteryStatus() {
-            if (navigator.getBattery) {
-                const battery = await navigator.getBattery();
-                const batteryPercentage = Math.round(battery.level * 100);
-                document.querySelector('.battery').textContent = `Battery: ${batteryPercentage}%`;
-            } else {
-                document.querySelector('.battery').textContent = `Battery: Not Supported`;
-            }
-        }
-
         // Update the clock every second
         setInterval(updateClock, 1000);
-
-        // Update battery status
-        updateBatteryStatus();
     </script>
 </body>
 </html>
