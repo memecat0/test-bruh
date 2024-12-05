@@ -1,56 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clock & Battery Status</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            color: #61dafb;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .container {
-            display: inline-block;
-            padding: 20px;
-            border: 2px solid #61dafb;
-            border-radius: 10px;
-            background: #1c1f26;
-        }
-        h1 {
-            margin: 0;
-            font-size: 2em;
-        }
-        .time {
-            margin-top: 10px;
-            font-size: 1.5em;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPA Library</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f4f4f4;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      padding: 10px;
+      background: #333;
+      color: #fff;
+      text-align: center;
+    }
+
+    .search-bar {
+      margin: 15px 0;
+      width: 90%;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .app-list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    .app-item {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .app-item h3 {
+      margin: 10px 0;
+    }
+
+    .app-item button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #28a745;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .app-item button:hover {
+      background: #218838;
+    }
+
+    footer {
+      margin-top: auto;
+      width: 100%;
+      background: #333;
+      color: #fff;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    footer .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    footer .tabs button {
+      background: #555;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer .tabs button:hover {
+      background: #777;
+    }
+
+    @media (max-width: 768px) {
+      .app-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Clock Time</h1>
-        <p>Credits: memecat0</p>
-        <div class="time">Time: Loading...</div>
+  <header>
+    <h1>IPA Library by Decrypt.day</h1>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search for apps...">
+  </div>
+
+  <div class="app-list" id="appList">
+    <!-- App Items -->
+    <div class="app-item" data-app-name="App1">
+      <h3>App 1</h3>
+      <p>Download Count: <span class="download-count">0</span></p>
+      <button onclick="downloadApp(this)">Get</button>
     </div>
+    <div class="app-item" data-app-name="App2">
+      <h3>App 2</h3>
+      <p>Download Count: <span class="download-count">0</span></p>
+      <button onclick="downloadApp(this)">Get</button>
+    </div>
+    <!-- Add more apps here -->
+  </div>
 
-    <script>
-        // Function to update the clock
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.querySelector('.time').textContent = `Time: ${hours}:${minutes}:${seconds}`;
+  <footer>
+    <div class="tabs">
+      <button onclick="alert('Switching to IPA Library')">IPA Library</button>
+      <button onclick="alert('Switching to IPA Hacks')">IPA Hacks</button>
+    </div>
+  </footer>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const appList = document.getElementById('appList');
+    const appItems = appList.querySelectorAll('.app-item');
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      appItems.forEach(item => {
+        const appName = item.getAttribute('data-app-name').toLowerCase();
+        item.style.display = appName.includes(query) ? '' : 'none';
+      });
+    });
+
+    function downloadApp(button) {
+      const appItem = button.closest('.app-item');
+      const countSpan = appItem.querySelector('.download-count');
+      let count = parseInt(countSpan.textContent);
+      count++;
+      countSpan.textContent = count;
+      saveDownloadCount(appItem.getAttribute('data-app-name'), count);
+    }
+
+    function saveDownloadCount(appName, count) {
+      localStorage.setItem(appName, count);
+    }
+
+    window.addEventListener('load', () => {
+      appItems.forEach(item => {
+        const appName = item.getAttribute('data-app-name');
+        const countSpan = item.querySelector('.download-count');
+        const savedCount = localStorage.getItem(appName);
+        if (savedCount) {
+          countSpan.textContent = savedCount;
         }
-
-        // Update the clock every second
-        setInterval(updateClock, 1000);
-    </script>
+      });
+    });
+  </script>
 </body>
 </html>
