@@ -52,21 +52,29 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    .app-item img {
+      width: 100%;
+      height: auto;
+      max-height: 150px;
+      border-radius: 8px;
+    }
+
     .app-item h3 {
       margin: 10px 0;
     }
 
-    .app-item button {
+    .app-item a {
+      display: inline-block;
       padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      background: #28a745;
+      text-decoration: none;
       color: #fff;
-      cursor: pointer;
+      background: #28a745;
+      border-radius: 5px;
       font-size: 14px;
+      margin-top: 10px;
     }
 
-    .app-item button:hover {
+    .app-item a:hover {
       background: #218838;
     }
 
@@ -122,15 +130,17 @@
 
   <div class="app-list" id="appList">
     <!-- App Items -->
-    <div class="app-item" data-app-name="App1">
+    <div class="app-item">
+      <img src="https://via.placeholder.com/150" alt="App 1 Image">
       <h3>App 1</h3>
       <p>Download Count: <span class="download-count">0</span></p>
-      <button onclick="downloadApp(this)">Get</button>
+      <a href="https://example.com/app1" target="_blank" onclick="downloadApp(this)">Get</a>
     </div>
-    <div class="app-item" data-app-name="App2">
+    <div class="app-item">
+      <img src="https://via.placeholder.com/150" alt="App 2 Image">
       <h3>App 2</h3>
       <p>Download Count: <span class="download-count">0</span></p>
-      <button onclick="downloadApp(this)">Get</button>
+      <a href="https://example.com/app2" target="_blank" onclick="downloadApp(this)">Get</a>
     </div>
     <!-- Add more apps here -->
   </div>
@@ -147,21 +157,22 @@
     const appList = document.getElementById('appList');
     const appItems = appList.querySelectorAll('.app-item');
 
+    // Fixing search to filter by app title
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.toLowerCase();
       appItems.forEach(item => {
-        const appName = item.getAttribute('data-app-name').toLowerCase();
-        item.style.display = appName.includes(query) ? '' : 'none';
+        const appTitle = item.querySelector('h3').textContent.toLowerCase();
+        item.style.display = appTitle.includes(query) ? '' : 'none';
       });
     });
 
-    function downloadApp(button) {
-      const appItem = button.closest('.app-item');
+    function downloadApp(link) {
+      const appItem = link.closest('.app-item');
       const countSpan = appItem.querySelector('.download-count');
       let count = parseInt(countSpan.textContent);
       count++;
       countSpan.textContent = count;
-      saveDownloadCount(appItem.getAttribute('data-app-name'), count);
+      saveDownloadCount(appItem.querySelector('h3').textContent, count);
     }
 
     function saveDownloadCount(appName, count) {
@@ -170,7 +181,7 @@
 
     window.addEventListener('load', () => {
       appItems.forEach(item => {
-        const appName = item.getAttribute('data-app-name');
+        const appName = item.querySelector('h3').textContent;
         const countSpan = item.querySelector('.download-count');
         const savedCount = localStorage.getItem(appName);
         if (savedCount) {
