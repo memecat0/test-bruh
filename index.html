@@ -3,92 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internet Speed Test</title>
+    <title>Clock & Battery Status</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background: #282c34;
+            color: #61dafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
             text-align: center;
+        }
+        .container {
+            display: inline-block;
             padding: 20px;
-            background-color: #f4f4f9;
+            border: 2px solid #61dafb;
+            border-radius: 10px;
+            background: #1c1f26;
         }
-        #speed-display {
+        h1 {
+            margin: 0;
             font-size: 2em;
-            margin: 20px;
-            color: #333;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #start-button {
-            background-color: #4caf50;
-            color: white;
-        }
-        #retry-button {
-            background-color: #f44336;
-            color: white;
-            display: none;
-        }
-        #loading {
-            display: none;
-            font-size: 1.2em;
-            color: #666;
+        .time, .battery {
+            margin-top: 10px;
+            font-size: 1.5em;
         }
     </style>
 </head>
 <body>
-    <h1>Internet Speed Test</h1>
-    <div id="speed-display">Your internet speed is: 0 Mbps</div>
-    <div id="loading">Testing...</div>
-    <button id="start-button">Started!</button>
-    <button id="retry-button">Try Again?</button>
+    <div class="container">
+        <h1>Clock & Battery Status</h1>
+        <p>Credits: memecat0</p>
+        <div class="time">Time: Loading...</div>
+        <div class="battery">Battery: Loading...</div>
+    </div>
 
     <script>
-        const speedDisplay = document.getElementById("speed-display");
-        const startButton = document.getElementById("start-button");
-        const retryButton = document.getElementById("retry-button");
-        const loadingText = document.getElementById("loading");
+        // Function to update the clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.querySelector('.time').textContent = `Time: ${hours}:${minutes}:${seconds}`;
+        }
 
-        async function testInternetSpeed() {
-            const testUrl = "https://speed.hetzner.de/100MB.bin"; // File to measure speed
-            const fileSizeInBytes = 100 * 1024 * 1024; // File size (100 MB in bytes)
-            
-            try {
-                loadingText.style.display = "block";
-                speedDisplay.textContent = "Your internet speed is: 0 Mbps";
-
-                const startTime = performance.now(); // Start timer
-                const response = await fetch(testUrl, { method: "GET", cache: "no-cache" });
-                await response.blob(); // Download file
-                const endTime = performance.now(); // End timer
-
-                const durationInSeconds = (endTime - startTime) / 1000;
-                const speedInMbps = (fileSizeInBytes * 8) / (durationInSeconds * 1024 * 1024); // Mbps calculation
-                
-                loadingText.style.display = "none";
-                speedDisplay.textContent = `Your internet speed is: ${speedInMbps.toFixed(2)} Mbps`;
-                retryButton.style.display = "inline-block";
-            } catch (error) {
-                loadingText.style.display = "none";
-                speedDisplay.textContent = "Error measuring speed. Try again!";
-                retryButton.style.display = "inline-block";
-                console.error("Error testing speed:", error);
+        // Function to get battery status
+        async function updateBatteryStatus() {
+            if (navigator.getBattery) {
+                const battery = await navigator.getBattery();
+                const batteryPercentage = Math.round(battery.level * 100);
+                document.querySelector('.battery').textContent = `Battery: ${batteryPercentage}%`;
+            } else {
+                document.querySelector('.battery').textContent = `Battery: Not Supported`;
             }
         }
 
-        startButton.addEventListener("click", () => {
-            startButton.style.display = "none";
-            retryButton.style.display = "none";
-            testInternetSpeed();
-        });
+        // Update the clock every second
+        setInterval(updateClock, 1000);
 
-        retryButton.addEventListener("click", () => {
-            retryButton.style.display = "none";
-            testInternetSpeed();
-        });
+        // Update battery status
+        updateBatteryStatus();
     </script>
 </body>
 </html>
