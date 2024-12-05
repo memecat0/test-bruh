@@ -47,43 +47,47 @@
     <button id="retry-button">Try Again?</button>
 
     <script>
-        let speedCounter = 0;
-        let interval;
-
         const speedDisplay = document.getElementById("speed-display");
         const startButton = document.getElementById("start-button");
         const retryButton = document.getElementById("retry-button");
         const loadingText = document.getElementById("loading");
 
-        function simulateSpeedTest() {
-            speedCounter = 0;
-            loadingText.style.display = "block";
-            speedDisplay.textContent = "Your internet speed is: 0 Mbps";
+        async function testInternetSpeed() {
+            const testUrl = "https://speed.hetzner.de/100MB.bin"; // File to measure speed
+            const fileSizeInBytes = 100 * 1024 * 1024; // File size (100 MB in bytes)
+            
+            try {
+                loadingText.style.display = "block";
+                speedDisplay.textContent = "Your internet speed is: 0 Mbps";
 
-            interval = setInterval(() => {
-                const randomIncrement = Math.floor(Math.random() * 10) + 5; // Random speed increment
-                speedCounter += randomIncrement;
+                const startTime = performance.now(); // Start timer
+                const response = await fetch(testUrl, { method: "GET", cache: "no-cache" });
+                await response.blob(); // Download file
+                const endTime = performance.now(); // End timer
 
-                speedDisplay.textContent = `Your internet speed is: ${speedCounter} Mbps`;
-
-                if (speedCounter >= 100) {
-                    clearInterval(interval);
-                    loadingText.style.display = "none";
-                    retryButton.style.display = "inline-block";
-                }
-            }, 500); // Update every 0.5 seconds
+                const durationInSeconds = (endTime - startTime) / 1000;
+                const speedInMbps = (fileSizeInBytes * 8) / (durationInSeconds * 1024 * 1024); // Mbps calculation
+                
+                loadingText.style.display = "none";
+                speedDisplay.textContent = `Your internet speed is: ${speedInMbps.toFixed(2)} Mbps`;
+                retryButton.style.display = "inline-block";
+            } catch (error) {
+                loadingText.style.display = "none";
+                speedDisplay.textContent = "Error measuring speed. Try again!";
+                retryButton.style.display = "inline-block";
+                console.error("Error testing speed:", error);
+            }
         }
 
         startButton.addEventListener("click", () => {
             startButton.style.display = "none";
             retryButton.style.display = "none";
-            simulateSpeedTest();
+            testInternetSpeed();
         });
 
         retryButton.addEventListener("click", () => {
-            startButton.style.display = "none";
             retryButton.style.display = "none";
-            simulateSpeedTest();
+            testInternetSpeed();
         });
     </script>
 </body>
